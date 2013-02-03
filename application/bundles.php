@@ -36,7 +36,9 @@
 return array(
 
 	'docs' => array('handles' => 'docs'),
-	'sentry' => array('auto' => true),
-	//'install' => array('handles' => 'install','auto' => 'true'),
+	'authority' => array('auto' => true),
+	'bootstrapper' => array('auto' => true),
+	'fizz' => array('auto' => true),
+
 
 );

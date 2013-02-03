@@ -1,49 +1,49 @@
 <?php
 
-use Laravel\Database\Eloquent\Query;
-
 class Thread extends Eloquent {
 	
-	public static $table = "posts";
-	public $includes = array('posts');
 	public static $timestamps = true;
-	
-	/**
-	 * Get a new fluent query builder instance for the model.
-	 * This is being overwritten so that we're able to run
-	 * two different Eloquent relational models from one
-	 * Database table.
-	 *
-	 * @return Query
-	 */
-	protected function query()
+
+	public function post()
 	{
-		return with(new Query($this))->where('is_thread','=','1');
+		return $this->has_one('Post');
 	}
 	
 	public function posts()
 	{
-		return $this->has_many('Post','parent_id');
+		return $this->has_many('Post');
+	}
+
+	public function poster()
+	{
+		return $this->belongs_to('User','user_id');
+	}
+
+	public function board()
+	{
+		return $this->belongs_to('Board');
 	}
 
 	public function latest_post()
 	{
-		$post = with(new Query($this))->order_by('created_at','desc')->get();
+		return $this->belongs_to('Post', 'latest_post_id');
+		//return $this->posts()->order_by('created_at','desc')->first();
+	}
+
+	public function post_count()
+	{
+		return Post::where('thread_id','=',$this->thread_id)->count();
 	}
 
 	public function latest_poster()
 	{
-		$post = self::latest_post();
+		return $this->belongs_to('User','latest_user_id');
+	}
 
-		if(count($post))
-		{
-			$post = $post[0];
-			$user = Sentry::user($post->user_id);
-			$info = $user->get(array('username','metadata'));
-
-			
-			return $combined;
-		}
+	public function sticky()
+	{
+		if(Auth::check() and Authority::can('sticky','Thread'))
+			$this->stickied = $this->stickied ?: 0;
 	}
 	
 }

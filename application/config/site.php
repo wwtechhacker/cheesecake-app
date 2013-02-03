@@ -12,6 +12,5 @@ return array(
 	*/
 
 	'name' => 'NewCo',
-	'installed' => false,
 
 );

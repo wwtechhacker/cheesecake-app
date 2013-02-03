@@ -10,10 +10,11 @@
 <body>
 	<div class="wrapper">
 		<header>
-			<h1>Laravel</h1>
+			<h1>Laravel <?php if(!is_null(Auth::user()) and Auth::user()->has_role('administrator'))echo " FOR ADMINS, BITCH."; else echo " bro d'fuck?"; ?></h1>
 			<h2>A Framework For Web Artisans</h2>
 
 			<p class="intro-text" style="margin-top: 45px;">
+				Into text?
 			</p>
 		</header>
 		<div role="main" class="main">

@@ -18,20 +18,34 @@ class Create_Forum {
 			$table->string('name');
 			$table->string('description');
 			$table->integer('weight');
+			$table->integer('latest_thread_id')->unsigned();
+
+			$table->timestamps();
 		});
-		
-		DB::table('forums')->insert(array(
-					'is_category' => 1,
-					'name' => 'Uncategorised',
-					'description' => 'The general category.',
-					'weight' => 1,
-					));	
-		DB::table('forums')->insert(array(
-					'parent_id' => 1,
-					'name' => 'General',
-					'description' => 'General chat, congregate here.',
-					'weight' => 1,
-					));
+
+		$category = new Category();
+		$category->is_category = 1;
+		$category->name = "Uncategorised";
+		$category->description = "The general category for new boards.";
+		$category->weight = 1;
+		$category->save();
+
+		$forum = new Forum();
+		$forum->is_category = 0;
+		$forum->name = "General";
+		$forum->parent_id = 1;
+		$forum->description = "General chat, congregate here.";
+		$forum->weight = 1;
+		$forum->save();
+
+		for($i = 1;$i < 5;$i++)
+		{
+			$category = new Category();
+			$category->is_category = 1;
+			$category->name = $i;
+			$category->weight = $i + 1;
+			$category->save();
+		}
 	}
 
 	/**

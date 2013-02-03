@@ -34,29 +34,73 @@
 
 Route::group(array('before' => 'auth'), function()
 {
+	Route::get('admin', array('as' => 'admin', 'uses' => 'admin@index'));
 	Route::get('admin/user', array(
-		'as' => 'admin.user.list', 'uses' => 'admin.user@list', 'permission' => 'admin.user'));
+				'as' => 'admin.user.list', 
+				'uses' => 'admin.user@list'));
 	Route::any('admin/user/edit/(:num)', array(
-		'as' => 'admin.user.edit', 'uses' => 'admin.user@edit', 'permission' => 'admin.user'));
+				'as' => 'admin.user.edit', 
+				'uses' => 'admin.user@edit'));
 	Route::get('admin/user/delete/(:num)', array(
-		'as' => 'admin.user.delete', 'uses' => 'admin.user@delete', 'permission' => 'admin.user'));
+				'as' => 'admin.user.delete', 'uses' => 
+				'admin.user@delete'));
 });
 
-Route::any('login', array('as' => 'auth.login', 'uses' => 'user@login'));
-Route::get('logout', array('as' => 'auth.logout', 'uses' => 'user@logout'));
+Route::any('login', array(
+				'as' => 'auth.login', 
+				'uses' => 'user@login'));
+Route::get('logout', array(
+				'as' => 'auth.logout', 
+				'uses' => 'user@logout'));
+Route::any('register', array(
+				'as' => 'auth.register', 
+				'uses' => 'user@register'));
 
 //
 //		FORUMS
 //
 
-Route::get('forums', array('as' => 'forum.home', 'uses' => 'forum@index'));
-Route::get('forums/board/(:any)', array('as' => 'forum.board', 'uses' => 'forum@board'));
-Route::get('forums/board/(:num)/thread/(:num)/(:any?)', array(
-	'as' => 'forum.board.thread', 'uses' => 'forum@thread'));
+// Forum home
+Route::get('forums', array(
+				'as' => 'forum.home', 
+				'uses' => 'forum@index'));
+// Viewing the boards of a category
+Route::get('forums/category/(:num)', array(
+				'as' => 'forum.category', 
+				'uses' => 'forum@category'));
+// Viewing the threads of a board
+Route::get('forums/board/(:num)', array(
+				'as' => 'forum.board', 
+				'uses' => 'forum@board'));
+// Posting a new thread to a board
+Route::any('forums/thread/new/(:num)', array(
+				'as' => 'forum.thread.new', 
+				'before' => 'auth', 
+				'uses' => 'forum@newThread'));
+// Viewing a thread
+Route::get('forums/thread/(:num)', array(
+				'as' => 'forum.thread', 
+				'uses' => 'forum@thread'));
+// Posting a new reply to a thread
+Route::any('forums/thread/reply/(:num)', array(
+				'as' => 'forum.thread.reply', 
+				'before' => 'auth', 
+				'uses' => 'forum@newReply'));
+
+// Toggle the lock on a thread
+Route::any('forums/thread/(:num)/lock', array(
+				'as' => 'forum.thread.lock',
+				'before' => 'auth',
+				'uses' => 'forum@lockThread'));
 
 //
 //		END FORUMS
 //
+
+Route::get('test', function()
+{
+	return Authority::can('create','User') ? "yes" : "no";
+});
 
 Route::get('/', function()
 {
@@ -119,6 +163,19 @@ Event::listen('500', function()
 Route::filter('before', function()
 {
 	// Do stuff before every request to your application...
+
+	if(Request::route()->bundle != "docs")
+	{
+		$exclude_requests = array('auth.login','auth.logout','auth.register','register');
+		
+		if(array_key_exists("as",Request::route()->action))
+		{
+			if(!in_array(Request::route()->action["as"],$exclude_requests))
+			{
+				Session::put('page',Request::route()->uri);
+			}
+		}
+	}
 });
 
 Route::filter('after', function($response)
@@ -133,6 +190,11 @@ Route::filter('csrf', function()
 
 Route::filter('auth', function()
 {
+	if(!Auth::check())
+	{
+		return Redirect::to_route('auth.login');
+	}
+	/*
 	$route_perm = Request::route()->action["permission"];
 	
 	
@@ -140,4 +202,5 @@ Route::filter('auth', function()
 				return Redirect::to_route('auth.login');
 	else if(!Sentry::user()->has_access($route_perm))
 				return Redirect::home()->with('error','Access failure.');
+				*/
 });

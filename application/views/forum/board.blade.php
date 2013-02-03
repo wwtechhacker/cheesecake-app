@@ -1,5 +1,10 @@
+<div id="breadcrumbs">
+	{{ $breadcrumb }}
+</div>
+<?php echo HTML::link_to_route('forum.thread.new','New Thread',array($boardid)); ?>
 <table border="1" cellspacing="5" cellpadding="5">
 	<tr>
+		<th>Posted By</th>
 		<th>Thread Name</th>
 		<th>Post Count</th>
 		<th>Latest Poster</th>
@@ -8,44 +13,15 @@
 	@foreach ($threads as $thread)
 	
 		<?php 
-			$latest_username = "N/A";
-			$post_count = count($thread->posts()->get());
-			$latest_posts = $thread->posts()->order_by('created_at','desc')->get();
-			if(count($latest_posts))
-			{
-				$latest_post = $latest_posts[0];
-				try
-				{
-					$user = Sentry::user($latest_post->user_id);
-					$meta = $user->get('metadata');
-					$latest_username = $meta["first_name"] . " " . $meta["last_name"];
-					//dd($latest_username);
-				}
-				catch(Sentry\SentryException $e)
-				{
-					$errors = $e->getMessage(); // Catch errors.
-					dd($errors);
-				}
-			}
-			else
-			{
-				try
-				{
-					$meta = Sentry::user($thread->user_id)->get('metadata');
-					$latest_username = $meta["first_name"] . " " . $meta["last_name"];
-				}
-				catch(Sentry\SentryException $e)
-				{
-					$errors = $e->getMessage(); // Catch errors
-					dd($errors);				// Dump & Die, bro.
-				}
-			}
+			$latest_username = $thread->latest_poster->name;
+			$post_count = $thread->post_count;
 		?>
 			
-		<tr>
+		<tr <?php if($thread->stickied)echo 'class="stickied"' ?>>
+			<td><?php echo $thread->poster->name; ?></td>
 			<td><?php 
-				echo HTML::link_to_route('forum.board.thread',$thread->title,
-							array($boardid,$thread->id,Str::slug($thread->title,'_'))); 
+				echo HTML::link_to_route('forum.thread',$thread->title,
+							array($thread->id)); 
 			?></td>
 			<td><?php echo $post_count; ?></td>
 			<td><?php echo $latest_username; ?></td>
@@ -53,3 +29,8 @@
 		
 	@endforeach
 </table>
+<?php if(Authority::can('lock','Thread') or Authority::can('sticky','Thread')) { ?>
+	<br />
+	Moderation Tools:
+
+<?php } ?>
