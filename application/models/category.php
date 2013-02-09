@@ -22,7 +22,7 @@ class Category extends Eloquent {
 	
 	public function forums()
 	{
-		return $this->has_many('Forum','parent_id');
+		return $this->has_many('Forum','parent_id')->order_by('weight');
 	}
 	
 }

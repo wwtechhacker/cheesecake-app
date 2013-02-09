@@ -49,11 +49,10 @@ class User_Controller extends Base_Controller {
 			$user->name = $input["name"];
 
 			$user->save();
+			$user->roles()->attach(3);
 			Auth::login($user->id);
 
 			return Redirect::home();
-			//if(Session::has('page'))return Redirect::to_route(Session::get('page'));
-			//else return Redirect::home();
 		}
 
 	}

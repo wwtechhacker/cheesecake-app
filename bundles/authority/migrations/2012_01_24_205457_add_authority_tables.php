@@ -10,6 +10,7 @@ class Authority_add_authority_tables {
 			$table->string('email');
 			$table->string('password');
 			$table->string('name');
+			$table->text('attributes');
 			$table->timestamps();
 		});
 
@@ -43,6 +44,11 @@ class Authority_add_authority_tables {
 		Role::create(array(
 			'id' => 2,
 			'name' => 'moderator'
+		));
+
+		Role::create(array(
+			'id' => 3,
+			'name' => 'user'
 		));
 
 		Schema::create('role_user', function($table)

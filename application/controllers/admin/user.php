@@ -7,59 +7,37 @@ class Admin_User_Controller extends Base_Controller {
 	
 	public function get_list()
 	{
-		try
-		{
-			$users = Sentry::user()->all();
-			
-			$this->layout->title = "List | User | " . Config::get('site.name');
-			$this->layout->content = View::make('admin.user.list')
+		$users = User::all();
+
+		$this->layout->title = Config::get('site.name') . " - List Users";
+		$this->layout->content = View::make('admin.user.list')
 										->with('users',$users);
-		}
-		catch (Sentry\SentryException $e)
-		{
-		    dd($e->getMessage()); // catch errors such as user not existing or bad fields
-		}
 	}
 	
 	public function get_delete($id)
 	{
-		if($id == 1)
-			return Redirect::to_route('admin.user.list')->with('error','Cannot delete root user.');
-		try
-		{
-			$user = Sentry::user($id);
-			$delete = $user->delete();
-			
-			if($delete)
-				return Redirect::to_route('admin.user.list');
-			else {
-				return Redirect::to_route('admin.user.list')
-							->with('error','Cannot delete user#'.$id);
-			}
-		}
-		catch (Sentry\SentryException $e)
-		{
-			dd($e->getMessage());
-		}
+		if($id == 1 or $id == Auth::user()->id)
+			return Redirect::to_route('admin.user.list')->with('error','Cannot delete user.');
+
+		$user = User::find($id);
+		if(!$user)return Redirect::to_route('admin.user.list')->with('error','Cannot find user.');
+
+		$user->delete();
+
+		return Redirect::to_route('admin.user.list');
 	}
 	
-	public function get_edit($id = false)
+	public function get_edit($id)
 	{
-		if($id==FALSE)
+		if(!($id > 0))
 			return Redirect::to_route('admin.user.list')->with('error','Cannot edit null user.');
-		
-		try
-		{
-			$user = Sentry::user((int)$id);
-			
-			$this->layout->title = "Edit | User | " . Config::get('site.name');
-			$this->layout->content = View::make('admin.user.edit')
+
+		$user = User::find($id);
+		if(!$user)return Redirect::to_route('admin.user.list')->with('error','Cannot find user.');
+
+		$this->layout->title = Config::get('site.name') . " - Edit user";
+		$this->layout->content = View::make('admin.user.edit')
 										->with('user',$user);
-		}
-		catch (Sentry\SentryException $e)
-		{
-			dd($e->getMessage());
-		}
 		
 	}
 	
@@ -69,8 +47,7 @@ class Admin_User_Controller extends Base_Controller {
 		
 		$rules = array(
 				'email' => 'required|email',
-				'username' => 'required',
-				'last_name' => 'required_with:first_name',
+				'name' => 'required',
 				);
 		
 		$validation = Validator::make($input,$rules);
@@ -78,27 +55,18 @@ class Admin_User_Controller extends Base_Controller {
 		{
 			dd($validation->errors);
 		}
-		
-		try
-		{
-			$vars = array(
-				'email' => $input['email'],
-				'username' => $input['username'],
-				'metadata' => array(
-						'first_name' => $input['first_name'],
-						'last_name' => $input['last_name'],
-						),
-				);
-			$user = Sentry::user((int)$id);
-			$update = $user->update($vars);
-			
-			if($update)return Redirect::to_route('admin.user.list');
-			else return Redirect::to_route('admin.user.list')->with('error','Edit failed');
-		}
-		catch (Sentry\SentryException $e)
-		{
-			dd($e->getMessage());
-		}
+
+		$user = User::find($id);
+		if(!$user)return Redirect::to_route('admin.user.list')->with('error','Cannot find user.');
+
+		$user->email = Input::get('email');
+		$user->name = Input::get('name');
+		if(Input::get('password') != "")
+				$input->password = Input::get('password');
+
+		$user->save();
+
+		return Redirect::to_route('admin.user.list');
 	}
 	
 }

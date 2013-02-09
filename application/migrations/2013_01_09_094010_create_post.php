@@ -24,6 +24,9 @@ class Create_Post {
 		$thread->board_id = 2;
 		$thread->post_id = 1;
 		$thread->user_id = 1;
+		$thread->latest_post_id = 1;
+		$thread->latest_user_id = 1;
+		$thread->post_count = 1;
 		$thread->title = "Testing...";
 		$thread->save();
 

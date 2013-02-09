@@ -1,3 +1,9 @@
 .stickied:last-child {
 	margin-bottom: 20px;
 }
+.category {
+	background: #bbbbff;
+}
+.board {
+	padding-left: 8px;
+}

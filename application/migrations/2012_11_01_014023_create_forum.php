@@ -36,16 +36,9 @@ class Create_Forum {
 		$forum->parent_id = 1;
 		$forum->description = "General chat, congregate here.";
 		$forum->weight = 1;
+		$forum->latest_thread_id = 1;
 		$forum->save();
 
-		for($i = 1;$i < 5;$i++)
-		{
-			$category = new Category();
-			$category->is_category = 1;
-			$category->name = $i;
-			$category->weight = $i + 1;
-			$category->save();
-		}
 	}
 
 	/**

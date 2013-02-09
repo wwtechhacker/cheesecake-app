@@ -35,6 +35,8 @@
 Route::group(array('before' => 'auth'), function()
 {
 	Route::get('admin', array('as' => 'admin', 'uses' => 'admin@index'));
+
+	// ADMIN / USER
 	Route::get('admin/user', array(
 				'as' => 'admin.user.list', 
 				'uses' => 'admin.user@list'));
@@ -44,6 +46,22 @@ Route::group(array('before' => 'auth'), function()
 	Route::get('admin/user/delete/(:num)', array(
 				'as' => 'admin.user.delete', 'uses' => 
 				'admin.user@delete'));
+	// END ADMIN / USER
+
+	// ADMIN / FORUM
+	Route::any('admin/forum', array(
+				'as' => 'admin.forum.list',
+				'uses' => 'admin.forum@list'));
+	Route::any('admin/forum/add', array(
+				'as' => 'admin.forum.add',
+				'uses' => 'admin.forum@add'));
+	Route::any('admin/forum/edit/(:num)', array(
+				'as' => 'admin.forum.edit',
+				'uses' => 'admin.forum@edit'));
+	Route::get('admin/forum/delete/(:num)', array(
+				'as' => 'admin.forum.delete',
+				'uses' => 'admin.forum@delete'));
+	// END ADMIN / FORUM
 });
 
 Route::any('login', array(
@@ -99,7 +117,15 @@ Route::any('forums/thread/(:num)/lock', array(
 
 Route::get('test', function()
 {
-	return Authority::can('create','User') ? "yes" : "no";
+	
+});
+Route::get('test2', function()
+{
+	$user = User::find(1);
+	$user->properties = json_encode(array('key' => 'value', 'testing' => 'lol'));
+	$user->save();
+
+	return Redirect::to('test');
 });
 
 Route::get('/', function()

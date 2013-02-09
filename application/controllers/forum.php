@@ -7,7 +7,7 @@ class Forum_Controller extends Base_Controller {
 	
 	public function get_index()
 	{
-		$categories = Category::with('forums')->get();
+		$categories = Category::with('forums')->order_by('weight')->get();
 		$bread = Breadcrumb::create(array('Home'));
 		
 		$this->layout->title = 'Hi.';

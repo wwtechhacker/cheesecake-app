@@ -10,7 +10,9 @@
 <body>
 	<div class="wrapper">
 		<header>
-			<h1>Laravel <?php if(!is_null(Auth::user()) and Auth::user()->has_role('administrator'))echo " FOR ADMINS, BITCH."; else echo " bro d'fuck?"; ?></h1>
+			<h1>Laravel <?php if(!is_null(Auth::user()) and Auth::user()->has_role('administrator'))
+									echo " FOR ADMINS, BITCH."; 
+								else echo " bro d'fuck?"; ?></h1>
 			<h2>A Framework For Web Artisans</h2>
 
 			<p class="intro-text" style="margin-top: 45px;">
@@ -47,9 +49,16 @@
 				</p>
 
 				<ul class="out-links">
-					<li><a href="http://laravel.com">Official Website</a></li>
-					<li><a href="http://forums.laravel.com">Laravel Forums</a></li>
-					<li><a href="http://github.com/laravel/laravel">GitHub Repository</a></li>
+					@if(Auth::guest())
+						<li>{{ HTML::link_to_route('auth.register','Register') }}</li>
+						<li>{{ HTML::link_to_route('auth.login','Login') }}</li>
+					@else
+						<li>{{ HTML::link_to_route('auth.logout','Logout') }}</li>
+						@if(Auth::user()->has_role('administrator'))
+							<li>{{ HTML::link_to_route('admin.panel','Admin Panel') }}</li>
+						@endif
+					@endif
+					<li>{{ HTML::link_to_route('forum.home','Forums') }}</li>
 				</ul>
 			</div>
 		</div>

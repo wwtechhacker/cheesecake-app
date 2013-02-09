@@ -30,6 +30,11 @@ return array(
             Authority::allow('manage', 'all');
             Authority::allow('moderate', 'all');
             //include($path.'admin.php');
+
+            Authority::deny('delete', 'User', function($that_user) use ($user) {
+                // If he tries to delete himself, we return true, setting the deny rule
+                return (int)$that_user->id === (int)$user->id;
+            });
         }
 
         /*

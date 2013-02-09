@@ -2,7 +2,14 @@
 
 class User extends Eloquent {
 
+	// public function __construct()
+	// {
+	// 	// parent::__construct();
+	// 	// $this->attr = new Attributes(json_decode($this->properties, true));
+	// }
+
 	public static $timestamps = true;
+	public $attr = null;
 
 	// Relationship functions
 	
@@ -56,5 +63,15 @@ class User extends Eloquent {
 	public function set_password($password)
 	{
 		$this->set_attribute('password', Hash::make($password));
+	}
+
+	public function attr()
+	{
+		if($this->attr === null)$this->attr = new Attributes(json_decode($this->properties, true),$this);
+		return $this->attr;
+	}
+	public function attr_save($attributes = array())
+	{
+		$this->set_attribute('properties',$attributes);
 	}
 }

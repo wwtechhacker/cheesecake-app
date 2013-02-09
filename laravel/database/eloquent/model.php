@@ -569,7 +569,7 @@ abstract class Model {
 		return array_get($this->attributes, $key);
 	}
 
-	/**
+	/***
 	 * Set an attribute's value on the model.
 	 *
 	 * @param  string  $key
