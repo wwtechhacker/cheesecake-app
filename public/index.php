@@ -1,6 +1,6 @@
 <?php
 /**
- * Laravel - A PHP Framework For Web Artisans
+ * Laravel - A PHP Framework For Epic Web Artisans
  *
  * @package  Laravel
  * @version  3.2.11

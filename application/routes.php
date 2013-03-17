@@ -58,9 +58,12 @@ Route::group(array('before' => 'auth'), function()
 	Route::any('admin/forum/edit/(:num)', array(
 				'as' => 'admin.forum.edit',
 				'uses' => 'admin.forum@edit'));
-	Route::get('admin/forum/delete/(:num)', array(
+	Route::any('admin/forum/delete/(:num)', array(
 				'as' => 'admin.forum.delete',
 				'uses' => 'admin.forum@delete'));
+	Route::post('admin/forum/request/(:num)', array(
+				'as' => 'admin.forum.edit.request',
+				'uses' => 'admin.forum@queryEdit'));
 	// END ADMIN / FORUM
 });
 
@@ -115,23 +118,21 @@ Route::any('forums/thread/(:num)/lock', array(
 //		END FORUMS
 //
 
+// Generic testing function, will probably forever exist.
 Route::get('test', function()
 {
-	
-});
-Route::get('test2', function()
-{
-	$user = User::find(1);
-	$user->properties = json_encode(array('key' => 'value', 'testing' => 'lol'));
-	$user->save();
-
-	return Redirect::to('test');
+	return "Hi";
 });
 
-Route::get('/', function()
+
+/*
+Route::get('/', array('as' => 'home', function()
 {
 	return View::make('home.index');
-});
+}));
+*/
+// Temporarily route the root to the forum index.
+Route::get('/', array('uses' => 'forum@index'));
 
 /*
 |--------------------------------------------------------------------------
@@ -218,6 +219,7 @@ Route::filter('auth', function()
 {
 	if(!Auth::check())
 	{
+		Session::put('return-to',Request::route()->action["as"]);
 		return Redirect::to_route('auth.login');
 	}
 	/*

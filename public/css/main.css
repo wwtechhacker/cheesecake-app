@@ -7,3 +7,21 @@
 .board {
 	padding-left: 8px;
 }
+#title {
+	margin-bottom: 10px;
+}
+#title h1 {
+	text-align: center;
+} 
+.forum {
+	margin-bottom: 50px;
+}
+.forum-table {
+	width: 100%;
+}
+.forum-table-title {
+	width: 75%;
+}
+.forum-table-info {
+	width: 25%;
+}

@@ -57,7 +57,6 @@ class Admin_Forum_Controller extends Base_Controller {
 		// the form (aka have javascript turned off) to use javascript.
 		return "Sorry, but you require Javascript to perform this action.";
 	}
-
 	public function post_add()
 	{
 
@@ -73,11 +72,57 @@ class Admin_Forum_Controller extends Base_Controller {
 		// Return a success message if it's an ajax query
 		if(Request::ajax())
 		{
-			return "Success. Object created.;".$ob->get_key().";".HTML::link_to_route('admin.forum.edit','[Edit]',array($ob->get_key()));
+			$edit = '<a href="#editModal" role="button" class="btn-mini" id="id:'.$ob->get_key().'">[Edit]</a>';
+			$edit .= ' <a href="'.HTML::link_to_route('admin.forum.edit', array($ob->get_key())).'" role="button" class="btn-mini delete-button" id="id:'.$ob->get_key().'">[Delete]</a>';
+			return "Success. Object created.;".$ob->get_key().";".$edit;
 		}
 		// Otherwise redirect the user to the forum list so they can manipulate
 		// placings, etc.
 		return Redirect::to_route('admin.forum.list');
+	}
+
+	public function get_edit($id)
+	{
+		return "Test";
+		$this->layout->title = Config::get('site.name') . " - Edit Object";
+		$this->layout->content = View::make('admin.forum.edit');
+	}
+	public function post_queryEdit($id)
+	{
+		if(Request::ajax())
+		{
+			$ob = ForumCat::find($id);
+
+			if($ob)
+			{
+				return $ob->name . "{{;}}" . $ob->description;
+			}
+			return "FAIL";
+		}
+		return "You shouldn't actually be here. Only AJAX queries should get here. What did you do? O.o";
+	}
+	public function post_edit($id)
+	{
+		$ob = ForumCat::find($id);
+
+		if($ob)
+		{
+			$name = Input::get('name') ?: Input::get('data')["name"];
+			$desc = Input::get('description') ?: Input::get('data')["description"];
+
+			$ob->name = $name;
+			$ob->description = $desc;
+			$ob->save();
+
+			if(Request::ajax())
+			{
+				return "Success. Object edited.;".$id.";".$name;
+			}
+			return Redirect::to_route('admin.forum.list');
+		}
+		else if(Request::ajax()) return "Error. Cannot find Object.";
+
+		return Redirect::to_route('admin.forum.list')->with('error','Cannot find Object');
 	}
 	
 }

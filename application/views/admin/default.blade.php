@@ -1,20 +1,20 @@
 <!DOCTYPE HTML>
-<html lang="en-US">
+<html lang="en">
 <head>
 	<meta charset="UTF-8">
 	<title>{{ $title }}</title>
 
-	<?php 
-		echo Asset::container('bootstrapper')->styles();
-		echo Asset::container('bootstrapper')->scripts();
-		echo HTML::style('css/main.css');
-		echo HTML::script('js/dump.js');
-		echo HTML::style('css/admin.css');
-	?>
-
-	
+	{{ Asset::container('bootstrapper')->styles() }}
+	{{ Asset::container('bootstrapper')->scripts() }}
+	{{ HTML::style('css/main.css') }}
+	{{ HTML::script('js/dump.js') }}
+	{{ HTML::style('css/admin.css') }}
 </head>
 <body>
-	{{ $content }}
+	<div class="row-fluid">
+		<div class="span6 offset3">
+			{{ $content }}
+		</div>
+	</div>
 </body>
 </html>

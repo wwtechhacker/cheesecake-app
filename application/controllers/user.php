@@ -19,7 +19,12 @@ class User_Controller extends Base_Controller {
 		$credentials = array('username' => $username,'password' => $password,'remember' => $remember);
 		
 		$valid_login = Auth::attempt($credentials);
-		if($valid_login)return Redirect::home();//to_route('admin.user.list');
+		if($valid_login)
+		{
+			$return = Session::get('return-to','home');
+			Session::forget('return-to');
+			return Redirect::to_route($return);
+		}
 		else return Redirect::to_route('auth.login')->with('error','Login attempt failed');
 	}
 	

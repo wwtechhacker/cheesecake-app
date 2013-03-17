@@ -13,7 +13,7 @@ return array(
 
     'initialize' => function($user)
     {
-        $path = __DIR__.DS.'application'.DS.'config'.DS.'roles'.DS; 
+        //$path = __DIR__.DS.'application'.DS.'config'.DS.'roles'.DS; 
         // The initialize method (this Closure function) will be ran on every page load when the bundle get's started.
         // A User Object will be passed into this method and is available via $user
         // The $user variable is a instantiated User Object (application/models/user.php)

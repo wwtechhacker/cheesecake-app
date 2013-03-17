@@ -1,11 +1,10 @@
 <div id="breadcrumbs">
 	{{ $breadcrumb }}
 </div>
-<?php echo HTML::link_to_route('forum.thread.new','New Thread',array($boardid)); ?>
-<table border="1" cellspacing="5" cellpadding="5">
+{{ HTML::link_to_route('forum.thread.new','New Thread',array($boardid)); }}
+<table id="forum" border="1" cellspacing="5" cellpadding="5">
 	<tr>
-		<th>Posted By</th>
-		<th>Thread Name</th>
+		<th colspan="2"></th>
 		<th>Post Count</th>
 		<th>Latest Poster</th>
 	</tr>
@@ -18,10 +17,10 @@
 		?>
 			
 		<tr <?php if($thread->stickied)echo 'class="stickied"' ?>>
-			<td><?php echo $thread->poster->name; ?></td>
-			<td><?php 
-				echo HTML::link_to_route('forum.thread',$thread->title,
-							array($thread->id)); 
+			<td colspan="2"><?php 
+				echo "<h4>".HTML::link_to_route('forum.thread',$thread->title,
+							array($thread->id))."</h4>";
+				echo "By ".$thread->poster->name; 
 			?></td>
 			<td><?php echo $post_count; ?></td>
 			<td><?php echo $latest_username; ?></td>
